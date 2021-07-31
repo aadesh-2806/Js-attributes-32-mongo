@@ -1,0 +1,220 @@
+//////////mongo/////////////////////
+
+> db
+test
+
+> show dbs
+admin   0.000GB
+config  0.000GB
+local   0.000GB
+
+> show databases
+admin   0.000GB
+config  0.000GB
+local   0.000GB
+
+> use animalShelter
+switched to db animalShelter
+
+> db
+animalShelter
+
+> show collections
+
+> db.dogs.insertOne({name: "Charlie" , age: 3 , breed: "corgi" , catFriendly: true})
+{
+        "acknowledged" : true,
+        "insertedId" : ObjectId("603e46dac494ba48a619b53c")
+}
+
+> show collections
+dogs
+
+////////////////////////////////////////////////////////////////////////////find//////////////////////////////////////////////////////////
+
+> db.dogs.find()
+{ "_id" : ObjectId("603e46dac494ba48a619b53c"), "name" : "Charlie", "age" : 3, "breed" : "corgi", "catFriendly" : true }
+db.dogs.insert([{name: "Wyatt" , age: 5 , breed: "Golden", catFriendly: true},{name: "Tonya" , age: 15 , breed: "Chihuahua", catFriendly: false},{name: "Alfred" , age: 19 , breed: "Calpaito", catFriendly: true} ,{name: "Wyatt" , age: 5 , breed: "Golden", catFriendly: true},{name: "Tonya" , age: 15 , breed: "Chihuahua", catFriendly: false},{name: "Alfred" , age: 19 , breed: "Calpaito", catFriendly: true}] )
+BulkWriteResult({
+        "writeErrors" : [ ],
+        "writeConcernErrors" : [ ],
+        "nInserted" : 6,
+        "nUpserted" : 0,
+        "nMatched" : 0,
+        "nModified" : 0,
+        "nRemoved" : 0,
+        "upserted" : [ ]
+})
+
+> db.dogs.find()
+{ "_id" : ObjectId("603e46dac494ba48a619b53c"), "name" : "Charlie", "age" : 3, "breed" : "corgi", "catFriendly" : true }
+{ "_id" : ObjectId("603e4984c494ba48a619b53d"), "name" : "Wyatt", "age" : 5, "breed" : "Golden", "catFriendly" : true }
+{ "_id" : ObjectId("603e4984c494ba48a619b53e"), "name" : "Tonya", "age" : 15, "breed" : "Chihuahua", "catFriendly" : false }
+{ "_id" : ObjectId("603e4984c494ba48a619b53f"), "name" : "Alfred", "age" : 19, "breed" : "Calpaito", "catFriendly" : true }
+{ "_id" : ObjectId("603e4996c494ba48a619b540"), "name" : "Wyatt", "age" : 5, "breed" : "Golden", "catFriendly" : true }
+{ "_id" : ObjectId("603e4996c494ba48a619b541"), "name" : "Tonya", "age" : 15, "breed" : "Chihuahua", "catFriendly" : false }
+{ "_id" : ObjectId("603e4996c494ba48a619b542"), "name" : "Alfred", "age" : 19, "breed" : "Calpaito", "catFriendly" : true }
+
+> db.cats.insert({name: "Blue Steele" , age: 6 , breed: "scottish" , dogfriend: false})
+WriteResult({ "nInserted" : 1 })
+
+> show collections
+cats
+dogs
+
+> db.cats.find()
+{ "_id" : ObjectId("603e4a0fc494ba48a619b543"), "name" : "Blue Steele", "age" : 6, "breed" : "scottish", "dogfriend" : false }
+
+>db.dogs.find({breed: "corgi"})
+{ "_id" : ObjectId("603e46dac494ba48a619b53c"), "name" : "Charlie", "age" : 3, "breed" : "corgi", "catFriendly" : true }
+
+> db.dogs.find({breed: "Corgi"})
+
+> db.dogs.find({catFriendly: true})
+{ "_id" : ObjectId("603e46dac494ba48a619b53c"), "name" : "Charlie", "age" : 3, "breed" : "corgi", "catFriendly" : true }
+{ "_id" : ObjectId("603e4984c494ba48a619b53d"), "name" : "Wyatt", "age" : 5, "breed" : "Golden", "catFriendly" : true }
+{ "_id" : ObjectId("603e4984c494ba48a619b53f"), "name" : "Alfred", "age" : 19, "breed" : "Calpaito", "catFriendly" : true }
+{ "_id" : ObjectId("603e4996c494ba48a619b540"), "name" : "Wyatt", "age" : 5, "breed" : "Golden", "catFriendly" : true }
+{ "_id" : ObjectId("603e4996c494ba48a619b542"), "name" : "Alfred", "age" : 19, "breed" : "Calpaito", "catFriendly" : true }
+
+> db.dogs.findOne({catFriendly: true})
+{
+        "_id" : ObjectId("603e46dac494ba48a619b53c"),
+        "name" : "Charlie",
+        "age" : 3,
+        "breed" : "corgi",
+        "catFriendly" : true
+}
+
+> db.dogs.find({breed: "Corgi"})
+
+
+//////////////////////////////////////update////////////////////////////////////
+
+
+>db.dogs.updateOne({name: "Charlie"}, {age: 6})
+uncaught exception: Error: the update operation document must contain atomic operators :
+DBCollection.prototype.updateOne@src/mongo/shell/crud_api.js:565:19
+@(shell):1:1
+
+> db.dogs.updateOne({name: "Charlie"}, {$set: {age: 6}})
+{ "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 1 }
+
+>db.dogs.find({name: "Charlie"})
+{ "_id" : ObjectId("603e46dac494ba48a619b53c"), "name" : "Charlie", "age" : 6, "breed" : "corgi", "catFriendly" : true }
+
+> db.dogs.find({name: "Charlie"})
+{ "_id" : ObjectId("603e46dac494ba48a619b53c"), "name" : "Charlie", "age" : 6, "breed" : "corgi", "catFriendly" : true }
+
+> db.dogs.updateOne({name: "Charlie"}, {$set: {color: "chocolate"}})
+{ "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 1 }
+
+> db.dogs.find({name: "Charlie"})
+{ "_id" : ObjectId("603e46dac494ba48a619b53c"), "name" : "Charlie", "age" : 6, "breed" : "corgi", "catFriendly" : true, "color" : "chocolate" }
+
+> db.dogs.updateMany({catFriendly: true}, {$set: {color: "blue"}})
+{ "acknowledged" : true, "matchedCount" : 5, "modifiedCount" : 5 }
+
+> db.dogs.find()
+{ "_id" : ObjectId("603e46dac494ba48a619b53c"), "name" : "Charlie", "age" : 6, "breed" : "corgi", "catFriendly" : true, "color" : "blue" }
+{ "_id" : ObjectId("603e4984c494ba48a619b53d"), "name" : "Wyatt", "age" : 5, "breed" : "Golden", "catFriendly" : true, "color" : "blue" }
+{ "_id" : ObjectId("603e4984c494ba48a619b53e"), "name" : "Tonya", "age" : 15, "breed" : "Chihuahua", "catFriendly" : false }
+{ "_id" : ObjectId("603e4984c494ba48a619b53f"), "name" : "Alfred", "age" : 19, "breed" : "Calpaito", "catFriendly" : true, "color" : "blue" }
+{ "_id" : ObjectId("603e4996c494ba48a619b540"), "name" : "Wyatt", "age" : 5, "breed" : "Golden", "catFriendly" : true, "color" : "blue" }
+{ "_id" : ObjectId("603e4996c494ba48a619b541"), "name" : "Tonya", "age" : 15, "breed" : "Chihuahua", "catFriendly" : false }
+{ "_id" : ObjectId("603e4996c494ba48a619b542"), "name" : "Alfred", "age" : 19, "breed" : "Calpaito", "catFriendly" : true, "color" : "blue" }
+
+> db.dogs.updateOne({name: "Tonya"}, {$set: {same: "changed"}})
+{ "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 1 }
+
+> db.dogs.find()
+{ "_id" : ObjectId("603e46dac494ba48a619b53c"), "name" : "Charlie", "age" : 6, "breed" : "corgi", "catFriendly" : true, "color" : "blue" }
+{ "_id" : ObjectId("603e4984c494ba48a619b53d"), "name" : "Wyatt", "age" : 5, "breed" : "Golden", "catFriendly" : true, "color" : "blue" }
+{ "_id" : ObjectId("603e4984c494ba48a619b53e"), "name" : "Tonya", "age" : 15, "breed" : "Chihuahua", "catFriendly" : false, "same" : "changed" }
+{ "_id" : ObjectId("603e4984c494ba48a619b53f"), "name" : "Alfred", "age" : 19, "breed" : "Calpaito", "catFriendly" : true, "color" : "blue" }
+{ "_id" : ObjectId("603e4996c494ba48a619b540"), "name" : "Wyatt", "age" : 5, "breed" : "Golden", "catFriendly" : true, "color" : "blue" }
+{ "_id" : ObjectId("603e4996c494ba48a619b541"), "name" : "Tonya", "age" : 15, "breed" : "Chihuahua", "catFriendly" : false }
+{ "_id" : ObjectId("603e4996c494ba48a619b542"), "name" : "Alfred", "age" : 19, "breed" : "Calpaito", "catFriendly" : true, "color" : "blue" }
+
+> db.cats.updateOne({age: 6} , {$set: { age: 7} , $currentDate: {lastChanged: true} })
+{ "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 1 }
+
+> db.cats.find()
+{ "_id" : ObjectId("603e4a0fc494ba48a619b543"), "name" : "Blue Steele", "age" : 7, "breed" : "scottish", "dogfriend" : false, "lastChanged" : ISODate("2021-03-02T14:41:56.907Z") }
+
+> db.dogs.findOne()
+{
+        "_id" : ObjectId("603e46dac494ba48a619b53c"),
+        "name" : "Charlie",
+        "age" : 6,
+        "breed" : "corgi",
+        "catFriendly" : true,
+        "color" : "blue"
+}
+
+db.dogs.deleteOne({name: "Alfred"})
+{ "acknowledged" : true, "deletedCount" : 1 }
+
+> db.dogs.find()
+{ "_id" : ObjectId("603e46dac494ba48a619b53c"), "name" : "Charlie", "age" : 6, "breed" : "corgi", "catFriendly" : true, "color" : "blue" }
+{ "_id" : ObjectId("603e4984c494ba48a619b53d"), "name" : "Wyatt", "age" : 5, "breed" : "Golden", "catFriendly" : true, "color" : "blue" }
+{ "_id" : ObjectId("603e4984c494ba48a619b53e"), "name" : "Tonya", "age" : 15, "breed" : "Chihuahua", "catFriendly" : false, "same" : "changed" }
+{ "_id" : ObjectId("603e4996c494ba48a619b540"), "name" : "Wyatt", "age" : 5, "breed" : "Golden", "catFriendly" : true, "color" : "blue" }
+{ "_id" : ObjectId("603e4996c494ba48a619b541"), "name" : "Tonya", "age" : 15, "breed" : "Chihuahua", "catFriendly" : false }
+{ "_id" : ObjectId("603e4996c494ba48a619b542"), "name" : "Alfred", "age" : 19, "breed" : "Calpaito", "catFriendly" : true, "color" : "blue" }
+
+
+///////////////////////delete/////////////////////////////////////
+
+
+> db.dogs.deleteOne({name: "Wyatt"})
+{ "acknowledged" : true, "deletedCount" : 1 }
+
+> db.dogs.find()
+{ "_id" : ObjectId("603e46dac494ba48a619b53c"), "name" : "Charlie", "age" : 6, "breed" : "corgi", "catFriendly" : true, "color" : "blue" }
+{ "_id" : ObjectId("603e4984c494ba48a619b53e"), "name" : "Tonya", "age" : 15, "breed" : "Chihuahua", "catFriendly" : false, "same" : "changed" }
+{ "_id" : ObjectId("603e4996c494ba48a619b540"), "name" : "Wyatt", "age" : 5, "breed" : "Golden", "catFriendly" : true, "color" : "blue" }
+{ "_id" : ObjectId("603e4996c494ba48a619b541"), "name" : "Tonya", "age" : 15, "breed" : "Chihuahua", "catFriendly" : false }
+{ "_id" : ObjectId("603e4996c494ba48a619b542"), "name" : "Alfred", "age" : 19, "breed" : "Calpaito", "catFriendly" : true, "color" : "blue" }
+
+
+> db.dogs.deleteMany({catFriendly: false})
+{ "acknowledged" : true, "deletedCount" : 2 }
+
+> db.dogs.find()
+{ "_id" : ObjectId("603e46dac494ba48a619b53c"), "name" : "Charlie", "age" : 6, "breed" : "corgi", "catFriendly" : true, "color" : "blue" }
+{ "_id" : ObjectId("603e4996c494ba48a619b540"), "name" : "Wyatt", "age" : 5, "breed" : "Golden", "catFriendly" : true, "color" : "blue" }
+{ "_id" : ObjectId("603e4996c494ba48a619b542"), "name" : "Alfred", "age" : 19, "breed" : "Calpaito", "catFriendly" : true, "color" : "blue" }
+
+ db.dogs.find({age: {$gt: 6}})
+{ "_id" : ObjectId("603e4996c494ba48a619b542"), "name" : "Alfred", "age" : 19, "breed" : "Calpaito", "catFriendly" : true, "color" : "blue" }
+
+> db.dogs.find({age: {$gte: 6}})
+{ "_id" : ObjectId("603e46dac494ba48a619b53c"), "name" : "Charlie", "age" : 6, "breed" : "corgi", "catFriendly" : true, "color" : "blue", "personality" : { "need" : "Kind", "help" : true } }
+{ "_id" : ObjectId("603e4996c494ba48a619b542"), "name" : "Alfred", "age" : 19, "breed" : "Calpaito", "catFriendly" : true, "color" : "blue" }
+
+> db.dogs.find({age: {$lte: 6}})
+{ "_id" : ObjectId("603e46dac494ba48a619b53c"), "name" : "Charlie", "age" : 6, "breed" : "corgi", "catFriendly" : true, "color" : "blue", "personality" : { "need" : "Kind", "help" : true } }
+{ "_id" : ObjectId("603e4996c494ba48a619b540"), "name" : "Wyatt", "age" : 5, "breed" : "Golden", "catFriendly" : true, "color" : "blue" }
+
+> db.dogs.find({age: {$lt: 6}})
+{ "_id" : ObjectId("603e4996c494ba48a619b540"), "name" : "Wyatt", "age" : 5, "breed" : "Golden", "catFriendly" : true, "color" : "blue" }
+
+> db.dogs.find({age: {$eq: 6}})
+{ "_id" : ObjectId("603e46dac494ba48a619b53c"), "name" : "Charlie", "age" : 6, "breed" : "corgi", "catFriendly" : true, "color" : "blue", "personality" : { "need" : "Kind", "help" : true } }
+
+> db.dogs.find({age: {$e: 6}})
+Error: error: {
+        "ok" : 0,
+        "errmsg" : "unknown operator: $e",
+        "code" : 2,
+        "codeName" : "BadValue"
+}
+
+> db.dogs.find({breed: {$in: ["corgi" , "Golden"]}})
+{ "_id" : ObjectId("603e46dac494ba48a619b53c"), "name" : "Charlie", "age" : 6, "breed" : "corgi", "catFriendly" : true, "color" : "blue", "personality" : { "need" : "Kind", "help" : true } }
+{ "_id" : ObjectId("603e4996c494ba48a619b540"), "name" : "Wyatt", "age" : 5, "breed" : "Golden", "catFriendly" : true, "color" : "blue" }
+
+> db.dogs.find({$or: [ {breed: {$in: ["corgi" , "Golden"] } } , { age: 6 }  ] } )
+{ "_id" : ObjectId("603e46dac494ba48a619b53c"), "name" : "Charlie", "age" : 6, "breed" : "corgi", "catFriendly" : true, "color" : "blue", "personality" : { "need" : "Kind", "help" : true } }
+{ "_id" : ObjectId("603e4996c494ba48a619b540"), "name" : "Wyatt", "age" : 5, "breed" : "Golden", "catFriendly" : true, "color" : "blue" }
